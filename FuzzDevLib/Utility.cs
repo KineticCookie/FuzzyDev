@@ -52,6 +52,89 @@ namespace FDL.Utility
         }
     }
 
+    public static class MathHelper
+    {
+        public static decimal FindNearest(decimal value, IEnumerable<decimal> pile)
+        {
+            if (ReferenceEquals(pile, null))
+                throw new NotImplementedException();
+
+            decimal nearest = pile.First();
+            decimal delta = value - nearest;
+            foreach (decimal element in pile)
+            {
+                decimal prevDelta = value - element;
+
+                if (prevDelta < delta)
+                {
+                    nearest = element;
+                    delta = prevDelta;
+                }
+            }
+            return nearest;
+        }
+
+        public static double FindNearest(double value, IEnumerable<double> pile)
+        {
+            if (ReferenceEquals(pile, null))
+                throw new NotImplementedException();
+
+            double nearest = pile.First();
+            double delta = value - nearest;
+            foreach (double element in pile)
+            {
+                double prevDelta = value - element;
+
+                if (prevDelta < delta)
+                {
+                    nearest = element;
+                    delta = prevDelta;
+                }
+            }
+            return nearest;
+        }
+
+        public static float FindNearest(float value, IEnumerable<float> pile)
+        {
+            if (ReferenceEquals(pile, null))
+                throw new NotImplementedException();
+
+            float nearest = pile.First();
+            float delta = value - nearest;
+            foreach (float element in pile)
+            {
+                float prevDelta = value - element;
+
+                if (prevDelta < delta)
+                {
+                    nearest = element;
+                    delta = prevDelta;
+                }
+            }
+            return nearest;
+        }
+
+        public static int FindNearest(int value, IEnumerable<int> pile)
+        {
+            if (ReferenceEquals(pile, null))
+                throw new NotImplementedException();
+
+            int nearest = pile.First();
+            int delta = value - nearest;
+            foreach (int element in pile)
+            {
+                int prevDelta = value - element;
+
+                if (prevDelta < delta)
+                {
+                    nearest = element;
+                    delta = prevDelta;
+                }
+            }
+            return nearest;
+        }
+    }
+
     #endregion Helpers
 
     #region Exceptions
