@@ -77,16 +77,16 @@ namespace FDL.NeuralNetwork
             if (ReferenceEquals(inputs, null))
                 throw new ArgumentNullException(nameof(inputs));
 
-            In.Add(new Neuron(Activation, 1), RandomHelper.NextDouble); //Bias
+            In.Add(new Neuron(Activation, 1), Helper.Rand.NextDouble); //Bias
             foreach (var neuron in inputs)
-                In.Add(neuron, RandomHelper.NextDouble);
+                In.Add(neuron, Helper.Rand.NextDouble);
         }
 
         public void ConnectToInput(Neuron input)
         {
             if (ReferenceEquals(input, null))
                 throw new ArgumentNullException(nameof(input));
-             In.Add(input, RandomHelper.NextDouble);
+             In.Add(input, Helper.Rand.NextDouble);
         }
 
         public double Calculate()

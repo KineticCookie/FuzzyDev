@@ -9,129 +9,156 @@ namespace FDL.Utility
 {
     #region Helpers
 
-    public static class DictionaryHelper
+    public static class Helper
     {
-        public static Dictionary<T, double> ToDictionaryWithZeros<T>(IEnumerable<T> enumerable)
+        public static void Swap<T>(ref T first, ref T second)
         {
-            if (ReferenceEquals(enumerable, null))
-                throw new ArgumentNullException(nameof(enumerable));
-
-            var result = new Dictionary<T, double>();
-            foreach (var item in enumerable)
-                result.Add(item, 0);
-            return result;
+            var temp = first;
+            first = second;
+            second = temp;
         }
 
-        public static Dictionary<T, double> ToDictionaryWithRandom<T>(IEnumerable<T> enumerable)
+        public static class String
         {
-            if (ReferenceEquals(enumerable, null))
-                throw new ArgumentNullException(nameof(enumerable));
-
-            var result = new Dictionary<T, double>();
-            foreach (var item in enumerable)
-                result.Add(item, RandomHelper.NextDouble);
-            return result;
-        }
-    }
-
-    public static class RandomHelper
-    {
-        private static Random rnd = new Random(Guid.NewGuid().GetHashCode());
-        private static int count = 0;
-        public static double NextDouble
-        {
-            get
+            public static byte[] GetBytes(string str)
             {
-                if (++count == 42)
-                {
-                    count = 0;
-                    rnd = new Random(Guid.NewGuid().GetHashCode());
-                }
-                return rnd.NextDouble() - 0.5;
+                byte[] bytes = new byte[str.Length * sizeof(char)];
+                System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
+                return bytes;
+            }
+
+            public static string GetString(byte[] bytes)
+            {
+                char[] chars = new char[bytes.Length / sizeof(char)];
+                System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
+                return new string(chars);
             }
         }
-    }
 
-    public static class MathHelper
-    {
-        public static decimal FindNearest(decimal value, IEnumerable<decimal> pile)
+        public static class Dictionary
         {
-            if (ReferenceEquals(pile, null))
-                throw new NotImplementedException();
-
-            decimal nearest = pile.First();
-            decimal delta = value - nearest;
-            foreach (decimal element in pile)
+            public static Dictionary<T, double> ToDictionaryWithZeros<T>(IEnumerable<T> enumerable)
             {
-                decimal prevDelta = value - element;
+                if (ReferenceEquals(enumerable, null))
+                    throw new ArgumentNullException(nameof(enumerable));
 
-                if (prevDelta < delta)
-                {
-                    nearest = element;
-                    delta = prevDelta;
-                }
+                var result = new Dictionary<T, double>();
+                foreach (var item in enumerable)
+                    result.Add(item, 0);
+                return result;
             }
-            return nearest;
+
+            public static Dictionary<T, double> ToDictionaryWithRandom<T>(IEnumerable<T> enumerable)
+            {
+                if (ReferenceEquals(enumerable, null))
+                    throw new ArgumentNullException(nameof(enumerable));
+
+                var result = new Dictionary<T, double>();
+                foreach (var item in enumerable)
+                    result.Add(item, Rand.NextDouble);
+                return result;
+            }
         }
 
-        public static double FindNearest(double value, IEnumerable<double> pile)
+        public static class Rand
         {
-            if (ReferenceEquals(pile, null))
-                throw new NotImplementedException();
-
-            double nearest = pile.First();
-            double delta = value - nearest;
-            foreach (double element in pile)
+            private static System.Random rnd = new System.Random(Guid.NewGuid().GetHashCode());
+            private static int count = 0;
+            public static double NextDouble
             {
-                double prevDelta = value - element;
-
-                if (prevDelta < delta)
+                get
                 {
-                    nearest = element;
-                    delta = prevDelta;
+                    if (++count == 42)
+                    {
+                        count = 0;
+                        rnd = new System.Random(Guid.NewGuid().GetHashCode());
+                    }
+                    return rnd.NextDouble() - 0.5;
                 }
             }
-            return nearest;
         }
 
-        public static float FindNearest(float value, IEnumerable<float> pile)
+        public static class Math
         {
-            if (ReferenceEquals(pile, null))
-                throw new NotImplementedException();
-
-            float nearest = pile.First();
-            float delta = value - nearest;
-            foreach (float element in pile)
+            public static decimal FindNearest(decimal value, IEnumerable<decimal> pile)
             {
-                float prevDelta = value - element;
+                if (ReferenceEquals(pile, null))
+                    throw new NotImplementedException();
 
-                if (prevDelta < delta)
+                decimal nearest = pile.First();
+                decimal delta = value - nearest;
+                foreach (decimal element in pile)
                 {
-                    nearest = element;
-                    delta = prevDelta;
+                    decimal prevDelta = value - element;
+
+                    if (prevDelta < delta)
+                    {
+                        nearest = element;
+                        delta = prevDelta;
+                    }
                 }
+                return nearest;
             }
-            return nearest;
-        }
 
-        public static int FindNearest(int value, IEnumerable<int> pile)
-        {
-            if (ReferenceEquals(pile, null))
-                throw new NotImplementedException();
-
-            int nearest = pile.First();
-            int delta = value - nearest;
-            foreach (int element in pile)
+            public static double FindNearest(double value, IEnumerable<double> pile)
             {
-                int prevDelta = value - element;
+                if (ReferenceEquals(pile, null))
+                    throw new NotImplementedException();
 
-                if (prevDelta < delta)
+                double nearest = pile.First();
+                double delta = value - nearest;
+                foreach (double element in pile)
                 {
-                    nearest = element;
-                    delta = prevDelta;
+                    double prevDelta = value - element;
+
+                    if (prevDelta < delta)
+                    {
+                        nearest = element;
+                        delta = prevDelta;
+                    }
                 }
+                return nearest;
             }
-            return nearest;
+
+            public static float FindNearest(float value, IEnumerable<float> pile)
+            {
+                if (ReferenceEquals(pile, null))
+                    throw new NotImplementedException();
+
+                float nearest = pile.First();
+                float delta = value - nearest;
+                foreach (float element in pile)
+                {
+                    float prevDelta = value - element;
+
+                    if (prevDelta < delta)
+                    {
+                        nearest = element;
+                        delta = prevDelta;
+                    }
+                }
+                return nearest;
+            }
+
+            public static int FindNearest(int value, IEnumerable<int> pile)
+            {
+                if (ReferenceEquals(pile, null))
+                    throw new NotImplementedException();
+
+                int nearest = pile.First();
+                int delta = value - nearest;
+                foreach (int element in pile)
+                {
+                    int prevDelta = value - element;
+
+                    if (prevDelta < delta)
+                    {
+                        nearest = element;
+                        delta = prevDelta;
+                    }
+                }
+                return nearest;
+            }
         }
     }
 
@@ -172,7 +199,7 @@ namespace FDL.Utility
 
         public RuntimeException_NotImplemented() : this(GetCallerMethodFullname()) { }
 
-        private RuntimeException_NotImplemented(string caller) : base(string.Format("{0} is not implemented", caller)) { }
+        private RuntimeException_NotImplemented(string caller) : base($"{caller} is not implemented") { }
     }
 
     #endregion Exceptions
