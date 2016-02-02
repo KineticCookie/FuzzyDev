@@ -105,9 +105,8 @@ namespace FDL.NeuralNetwork
         public void BackPropagnation()
         {
             Error *= Activation.Derivative(Charge);
-            var oldIn = new List<Neuron>(In.Keys);
 
-            foreach (var neuron in oldIn)
+            foreach (var neuron in In.Keys)
             {
                 neuron.Error += Error;
                 In[neuron] += Error * neuron.Charge;
@@ -136,6 +135,8 @@ namespace FDL.NeuralNetwork
         /// <param name="inputs">Target layer, that will be connected</param>
         public void ConnectToMe(NeuralLayer inputs)
         {
+            if (ReferenceEquals(inputs, null))
+                throw new ArgumentNullException(nameof(inputs));
             foreach (var neuron in Layer)
                 neuron.ConnectToInput(inputs.Layer);
         }
@@ -143,7 +144,10 @@ namespace FDL.NeuralNetwork
         {
             if (ReferenceEquals(input, null))
                 throw new ArgumentNullException(nameof(input));
-            Layer.ForEach(x => x.ConnectToInput(input));
+            foreach (var item in Layer)
+            {
+                item.ConnectToInput(input);
+            }
         }
         /// <summary>
         /// Calculate all neurons in layer
@@ -153,7 +157,6 @@ namespace FDL.NeuralNetwork
         {
             return Layer.Select(n => n.Calculate()).ToArray();
         }
-
     }
 
     #endregion NeuralLayer
@@ -163,7 +166,7 @@ namespace FDL.NeuralNetwork
     public class NeuralNetwork
     {
         NeuralLayer InputNeurons;
-        List<NeuralLayer> HiddenNeurons;
+        List<NeuralLayer> HiddenLayers;
         NeuralLayer OutputNeurons;
 
         public NeuralNetwork(IActivationFunction activationFunc, int layersQuantity, int neuronsPerLayer, Neuron bias = null)
@@ -173,12 +176,12 @@ namespace FDL.NeuralNetwork
                 InputNeurons = new NeuralLayer(neuronsPerLayer, activationFunc);
                 NeuralLayer prevLayer = InputNeurons;
 
-                HiddenNeurons = new List<NeuralLayer>(layersQuantity);
+                HiddenLayers = new List<NeuralLayer>(layersQuantity);
                 for (int i = 0; i < layersQuantity; i++)
                 {
-                    HiddenNeurons.Add(new NeuralLayer(neuronsPerLayer, activationFunc));
-                    HiddenNeurons[i].ConnectToMe(prevLayer);
-                    prevLayer = HiddenNeurons[i];
+                    HiddenLayers.Add(new NeuralLayer(neuronsPerLayer, activationFunc));
+                    HiddenLayers[i].ConnectToMe(prevLayer);
+                    prevLayer = HiddenLayers[i];
                 }
 
                 OutputNeurons = new NeuralLayer(neuronsPerLayer, activationFunc);
@@ -189,13 +192,13 @@ namespace FDL.NeuralNetwork
                 InputNeurons = new NeuralLayer(neuronsPerLayer, activationFunc);
                 NeuralLayer prevLayer = InputNeurons;
 
-                HiddenNeurons = new List<NeuralLayer>(layersQuantity);
+                HiddenLayers = new List<NeuralLayer>(layersQuantity);
                 for (int i = 0; i < layersQuantity; i++)
                 {
-                    HiddenNeurons.Add(new NeuralLayer(neuronsPerLayer, activationFunc));
-                    HiddenNeurons[i].ConnectToMe(prevLayer);
-                    HiddenNeurons[i].ConnectToMe(bias);
-                    prevLayer = HiddenNeurons[i];
+                    HiddenLayers.Add(new NeuralLayer(neuronsPerLayer, activationFunc));
+                    HiddenLayers[i].ConnectToMe(prevLayer);
+                    HiddenLayers[i].ConnectToMe(bias);
+                    prevLayer = HiddenLayers[i];
                 }
                 OutputNeurons = new NeuralLayer(neuronsPerLayer, activationFunc);
                 OutputNeurons.ConnectToMe(prevLayer);
@@ -210,9 +213,17 @@ namespace FDL.NeuralNetwork
                 throw new ArgumentOutOfRangeException(nameof(inputs), "inputs size must be equal to input neurons quantity");
 
             int i = 0;
-            InputNeurons.Layer.ForEach(l => l.Charge = inputs[i++]);
+            foreach (var item in InputNeurons.Layer)
+            {
+                item.Charge = inputs[i++];
+            }
 
-            HiddenNeurons.ForEach(l => l.Calculate());
+            foreach (var item in HiddenLayers)
+            {
+                item.Calculate();
+            }
+
+            HiddenLayers.ForEach(l => l.Calculate());
 
             return OutputNeurons.Calculate();
         }
@@ -231,7 +242,7 @@ namespace FDL.NeuralNetwork
                 OutputNeurons.Layer[i].CalculateError(errorNeuron);
             }
 
-            foreach (var layer in HiddenNeurons)
+            foreach (var layer in HiddenLayers)
             {
                 foreach (var neuron in layer.Layer)
                 {

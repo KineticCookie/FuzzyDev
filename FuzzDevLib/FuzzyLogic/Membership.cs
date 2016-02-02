@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FDL.FuzzyLogic
+namespace FDL.FuzzyLogic.Membership
 {
     public delegate double MembershipDelegate(double x);
 

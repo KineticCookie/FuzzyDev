@@ -77,7 +77,7 @@ namespace FDL.FuzzyLogic.Rules
         public double Evaluate(InferenceContext context)
         {
             double value = context[_left];
-            return value == double.NaN ? double.NaN : _right[value];
+            return double.IsNaN(value) ? double.NaN : _right[value];
         }
 
         public string ToText()
